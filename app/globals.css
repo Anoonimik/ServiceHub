@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  
+  :root {
+    --border: 229 231 235;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-md hover:shadow-lg hover:from-primary-700 hover:to-primary-800 transform hover:-translate-y-0.5 focus:ring-primary-500;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-600 text-white shadow hover:bg-gray-700 hover:shadow-md transform hover:-translate-y-0.5 focus:ring-gray-500;
+  }
+  
+  .btn-danger {
+    @apply bg-red-600 text-white shadow hover:bg-red-700 hover:shadow-md transform hover:-translate-y-0.5 focus:ring-red-500;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6 transition-all duration-200 hover:shadow-md;
+  }
+  
+  .input {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
+  }
+  
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wide;
+  }
+  
+  .badge-pending {
+    @apply bg-amber-100 text-amber-800;
+  }
+  
+  .badge-confirmed {
+    @apply bg-blue-100 text-blue-800;
+  }
+  
+  .badge-completed {
+    @apply bg-green-100 text-green-800;
+  }
+  
+  .badge-cancelled {
+    @apply bg-red-100 text-red-800;
+  }
+  
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .page-container {
+    @apply container-custom py-8;
+  }
+  
+  .section-header {
+    @apply text-center mb-8;
+  }
+  
+  .section-header h1 {
+    @apply text-4xl font-bold text-gray-900 mb-2 bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent;
+  }
+  
+  .section-header p {
+    @apply text-lg text-gray-600;
+  }
+}

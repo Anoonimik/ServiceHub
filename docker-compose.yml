@@ -1,0 +1,55 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: servicehub_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: servicehub_db
+      MYSQL_USER: servicehub_user
+      MYSQL_PASSWORD: servicehub_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - servicehub_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: servicehub_nextjs
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=servicehub_user
+      - DB_PASSWORD=servicehub_password
+      - DB_NAME=servicehub_db
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - servicehub_network
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+
+volumes:
+  mysql_data:
+
+networks:
+  servicehub_network:
+    driver: bridge
+

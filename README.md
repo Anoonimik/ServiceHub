@@ -1,17 +1,5 @@
 # ServiceHub - Universal Service Booking Platform
 
-A modern, full-stack service booking platform built with Next.js 14, TypeScript, MySQL, and Docker. Users can offer their services as providers or book services from others.
-
-## Features
-
-- 🔐 **User Authentication** - JWT-based authentication with "Remember me" functionality
-- 👤 **User Dashboard** - Personal profile and appointment management
-- 🏢 **Provider System** - Become a service provider and manage your services
-- 📅 **Service Booking** - Easy appointment reservation system
-- 🎨 **Modern UI** - Built with Tailwind CSS and responsive design
-- 🏗️ **Clean Architecture** - Domain-driven design with separation of concerns
-- 🐳 **Docker Support** - Easy deployment with Docker Compose
-
 ## Tech Stack
 
 - **Frontend**: Next.js 14 (App Router), React, TypeScript, Tailwind CSS
@@ -32,7 +20,7 @@ A modern, full-stack service booking platform built with Next.js 14, TypeScript,
 
 1. Clone the repository:
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Anoonimik/ServiceHub.git
 cd ServiceHub
 ```
 

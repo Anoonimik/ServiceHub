@@ -122,9 +122,5 @@ npm run lint
 
 ## License
 
-This project is private and proprietary.
-
-## Author
-
-Your Name
+This project is private and proprietary
 

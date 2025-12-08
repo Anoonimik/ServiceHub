@@ -29,7 +29,6 @@ export function middleware(request: NextRequest) {
   const isProtectedApiRoute = protectedApiRoutes.some(route => pathname.startsWith(route));
   const isProviderApiRoute = providerApiRoutes.some(route => pathname.startsWith(route));
 
-  // Handle API routes that require authentication
   if (isProtectedApiRoute) {
     const authHeader = request.headers.get('authorization');
     const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null;
@@ -57,8 +56,6 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // Page routes are protected by useRequireAuth hook on the client side
-  // This provides better UX as the check happens after the page loads
 
   return NextResponse.next();
 }

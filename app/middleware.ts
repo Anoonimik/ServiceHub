@@ -73,4 +73,3 @@ export const config = {
     '/api/reservations/my',
   ],
 };
-

@@ -47,9 +47,14 @@ export function useMyServices() {
       const servicesData = await serviceApi.getMyServices();
       setServices(Array.isArray(servicesData) ? servicesData : []);
     } catch (err: any) {
-      console.error('Error fetching services:', err);
-      setError(err.message || 'Failed to fetch services');
-      setServices([]);
+      if (err?.statusCode === 403) {
+        setServices([]);
+        setError(null);
+      } else {
+        console.error('Error fetching services:', err);
+        setError(err.message || 'Failed to fetch services');
+        setServices([]);
+      }
     } finally {
       setLoading(false);
     }

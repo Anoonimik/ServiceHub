@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { handleApiRoute } from '@/shared/lib/api/response';
+import { handleApiRoute, ApiError } from '@/shared/lib/api/response';
 import { requireAuth, requireRole } from '@/shared/lib/api/middleware';
 import { validateString } from '@/shared/lib/api/validators';
 import { container } from '@/infrastructure/di/container';
@@ -61,6 +61,17 @@ export async function POST(request: NextRequest) {
       description,
     });
 
+    const updatedUser = await container.userRepository.findById(user.id);
+    if (!updatedUser) {
+      throw new ApiError(404, 'User not found');
+    }
+
+    const newToken = container.tokenGenerator.generate({
+      id: updatedUser.id,
+      email: updatedUser.email,
+      role: updatedUser.role,
+    });
+
     const providerDTO: ProviderResponseDTO = {
       id: provider.id,
       userId: provider.userId,
@@ -71,6 +82,19 @@ export async function POST(request: NextRequest) {
       updatedAt: provider.updatedAt.toISOString(),
     };
 
-    return providerDTO;
+    return {
+      provider: providerDTO,
+      token: newToken,
+      user: {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        phone: updatedUser.phone,
+        role: updatedUser.role,
+        createdAt: updatedUser.createdAt.toISOString(),
+        updatedAt: updatedUser.updatedAt.toISOString(),
+      },
+    };
   });
 }

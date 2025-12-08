@@ -45,9 +45,14 @@ export function useMyProvider() {
       const providerData = await providerApi.getMyProviderProfile();
       setProvider(providerData);
     } catch (err: any) {
-      console.error('Error fetching provider:', err);
-      setError(err.message || 'Failed to fetch provider');
-      setProvider(null);
+      if (err?.statusCode === 403) {
+        setProvider(null);
+        setError(null);
+      } else {
+        console.error('Error fetching provider:', err);
+        setError(err.message || 'Failed to fetch provider');
+        setProvider(null);
+      }
     } finally {
       setLoading(false);
     }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { providerApi } from '@/entities/provider/api/providerApi';
 import { useAuthStore } from '@/features/auth/model/authStore';
+import { User } from '@/entities/user/model/types';
 
 interface ProviderFormData {
   business_name: string;
@@ -38,11 +39,10 @@ export function useProviderForm() {
         return;
       }
 
-      const provider = await providerApi.becomeProvider(formData);
+      const { provider: providerData, token: newToken, user: updatedUser } = await providerApi.becomeProvider(formData);
       
-      if (user) {
-        setUser({ ...user, role: 'provider' });
-      }
+      const setAuth = useAuthStore.getState().setAuth;
+      setAuth(updatedUser as User, newToken);
 
       router.push('/providers/dashboard');
     } catch (err: any) {

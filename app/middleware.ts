@@ -5,7 +5,7 @@ import { verifyToken } from '@/shared/lib/auth';
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const protectedRoutes = [
+  const protectedPageRoutes = [
     '/dashboard',
     '/providers/become',
     '/providers/dashboard',
@@ -13,46 +13,52 @@ export function middleware(request: NextRequest) {
     '/providers/services',
   ];
 
-  const providerRoutes = [
-    '/providers/dashboard',
-    '/providers/edit',
-    '/providers/services',
+  const protectedApiRoutes = [
+    '/api/auth/me',
+    '/api/providers',
+    '/api/services/my',
+    '/api/reservations/my',
   ];
 
-  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
-  const isProviderRoute = providerRoutes.some(route => pathname.startsWith(route));
+  const providerApiRoutes = [
+    '/api/providers',
+    '/api/services/my',
+  ];
 
-  if (isProtectedRoute) {
-    // Handle API routes
-    if (pathname.startsWith('/api/')) {
-      const authHeader = request.headers.get('authorization');
-      const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null;
+  const isProtectedPageRoute = protectedPageRoutes.some(route => pathname.startsWith(route));
+  const isProtectedApiRoute = protectedApiRoutes.some(route => pathname.startsWith(route));
+  const isProviderApiRoute = providerApiRoutes.some(route => pathname.startsWith(route));
 
-      if (!token) {
-        return NextResponse.json(
-          { success: false, error: 'Unauthorized' },
-          { status: 401 }
-        );
-      }
+  // Handle API routes that require authentication
+  if (isProtectedApiRoute) {
+    const authHeader = request.headers.get('authorization');
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null;
 
-      const payload = verifyToken(token);
-      if (!payload) {
-        return NextResponse.json(
-          { success: false, error: 'Invalid token' },
-          { status: 401 }
-        );
-      }
-
-      if (isProviderRoute && payload.role !== 'provider') {
-        return NextResponse.json(
-          { success: false, error: 'Forbidden - Provider access required' },
-          { status: 403 }
-        );
-      }
+    if (!token) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
     }
-    // Page routes are protected by useRequireAuth hook on the client side
-    // This provides better UX as the check happens after the page loads
+
+    const payload = verifyToken(token);
+    if (!payload) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid token' },
+        { status: 401 }
+      );
+    }
+
+    if (isProviderApiRoute && payload.role !== 'provider') {
+      return NextResponse.json(
+        { success: false, error: 'Forbidden - Provider access required' },
+        { status: 403 }
+      );
+    }
   }
+
+  // Page routes are protected by useRequireAuth hook on the client side
+  // This provides better UX as the check happens after the page loads
 
   return NextResponse.next();
 }

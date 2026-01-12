@@ -4,3 +4,7 @@ export { LoadingSpinner } from './LoadingSpinner/LoadingSpinner';
 export { EmptyState } from './EmptyState/EmptyState';
 export { ErrorMessage } from './ErrorMessage/ErrorMessage';
 export { SuccessMessage } from './SuccessMessage/SuccessMessage';
+export { SearchInput } from './SearchInput/SearchInput';
+export { FilterHeader } from './FilterHeader/FilterHeader';
+export { FilterResultsCount } from './FilterResultsCount/FilterResultsCount';
+export { ActiveOnlyCheckbox } from './ActiveOnlyCheckbox/ActiveOnlyCheckbox';

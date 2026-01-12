@@ -6,6 +6,7 @@ export interface CreateReservationDTO {
   serviceId: number;
   reservationDate: string;
   notes?: string;
+  timeSlotId?: number;
 }
 
 export interface ReservationResponseDTO {

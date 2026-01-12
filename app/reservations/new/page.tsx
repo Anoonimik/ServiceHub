@@ -15,8 +15,10 @@ export default function NewReservation() {
     loading,
     error,
     success,
+    selectedSlotId,
     handleChange,
     handleSubmit,
+    handleSlotSelect,
   } = useReservationForm()
 
   return (
@@ -51,6 +53,8 @@ export default function NewReservation() {
                 }}
                 services={services}
                 onChange={handleChange}
+                onSlotSelect={handleSlotSelect}
+                selectedSlotId={selectedSlotId}
               />
 
               <div className="flex flex-wrap gap-4 pt-4">

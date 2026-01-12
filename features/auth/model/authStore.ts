@@ -26,9 +26,9 @@ const getStoredToken = (): string | null => {
 };
 
 export const useAuthStore = create<AuthState>((set, get) => ({
-  user: getStoredUser(),
-  token: getStoredToken(),
-  isAuthenticated: !!(getStoredToken() && getStoredUser()),
+  user: null,
+  token: null,
+  isAuthenticated: false,
   initialized: false,
   
   setAuth: (user, token) => {
@@ -56,6 +56,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   
   initialize: async () => {
     if (get().initialized) return;
+    
+    if (typeof window === 'undefined') {
+      set({ initialized: true });
+      return;
+    }
     
     const token = getStoredToken();
     const storedUser = getStoredUser();

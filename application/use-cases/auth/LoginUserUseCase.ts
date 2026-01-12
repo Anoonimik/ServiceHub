@@ -11,22 +11,17 @@ export class LoginUserUseCase {
     private tokenGenerator: ITokenGenerator
   ) {}
 
+  /**
+   * Execute user login use case
+   * @param dto - User login credentials
+   * @returns Authenticated user and token
+   */
   async execute(dto: LoginUserDTO): Promise<{ user: any; token: string }> {
-    // Find user
     const user = await this.userRepository.findByEmail(dto.email);
     if (!user) {
       throw new ApiError(401, 'Invalid email or password');
     }
 
-    // Get password hash from repository (we need to extend interface)
-    // For now, we'll handle this differently
-    // TODO: Add getPasswordHash method to repository or handle in infrastructure
-
-    // Verify password
-    // This will be handled in the infrastructure layer
-    // For now, we'll pass the user and let infrastructure verify
-
-    // Generate token
     const token = this.tokenGenerator.generate({
       id: user.id,
       email: user.email,

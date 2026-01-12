@@ -17,14 +17,15 @@ export async function GET(request: NextRequest) {
 
     return services.map(service => ({
       id: service.id,
-      providerId: service.providerId,
+      provider_id: service.providerId,
       name: service.name,
       description: service.description,
       duration: service.duration,
       price: service.price,
-      isActive: service.isActive,
-      createdAt: service.createdAt.toISOString(),
-      updatedAt: service.updatedAt.toISOString(),
+      is_active: service.isActive,
+      allow_custom_time: service.allowCustomTime,
+      created_at: service.createdAt.toISOString(),
+      updated_at: service.updatedAt.toISOString(),
     }));
   });
 }

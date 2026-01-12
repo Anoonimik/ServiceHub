@@ -1,19 +1,26 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useAuthStore } from '@/features/auth/model/authStore';
+import { useAuthStore } from '@/shared/lib/authStore';
 import { Button } from '@/shared/ui';
 import { useRouter } from 'next/navigation';
 
 export const Header = () => {
-  const { user, isAuthenticated, clearAuth } = useAuthStore();
+  const { user, isAuthenticated, clearAuth, initialized } = useAuthStore();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleLogout = () => {
     clearAuth();
     router.push('/login');
   };
+
+  const showAuthenticated = mounted && initialized && isAuthenticated;
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
@@ -31,7 +38,7 @@ export const Header = () => {
           </Link>
           
           <nav className="hidden md:flex items-center space-x-1">
-            {isAuthenticated ? (
+            {showAuthenticated ? (
               <>
                 <Link 
                   href="/dashboard" 

@@ -63,6 +63,38 @@ export class ReservationRepository implements IReservationRepository {
     ));
   }
 
+  async findByProviderId(providerId: number): Promise<Reservation[]> {
+    const results = await executeQuery<{
+      id: number;
+      customer_id: number;
+      service_id: number;
+      user_id: number | null;
+      reservation_date: Date;
+      status: string;
+      notes: string | null;
+      created_at: Date;
+      updated_at: Date;
+    }>(
+      `SELECT r.* FROM reservations r
+       INNER JOIN services s ON r.service_id = s.id
+       WHERE s.provider_id = ?
+       ORDER BY r.reservation_date DESC`,
+      [providerId]
+    );
+
+    return results.map(r => new Reservation(
+      r.id,
+      r.customer_id,
+      r.service_id,
+      r.user_id,
+      new Date(r.reservation_date),
+      r.status as ReservationStatus,
+      r.notes,
+      new Date(r.created_at),
+      new Date(r.updated_at)
+    ));
+  }
+
   async findRecent(limit: number = 50): Promise<Reservation[]> {
     const results = await executeQuery<{
       id: number;

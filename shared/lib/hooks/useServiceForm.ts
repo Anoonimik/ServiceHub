@@ -7,6 +7,7 @@ interface ServiceFormData {
   description: string;
   duration: string;
   price: string;
+  allow_custom_time: boolean;
 }
 
 export function useServiceForm() {
@@ -19,12 +20,15 @@ export function useServiceForm() {
     description: '',
     duration: '',
     price: '',
+    allow_custom_time: true,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const target = e.target;
+    const value = target.type === 'checkbox' ? (target as HTMLInputElement).checked : target.value;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [target.name]: value,
     });
   };
 
@@ -45,6 +49,7 @@ export function useServiceForm() {
         description: formData.description || undefined,
         duration: parseInt(formData.duration),
         price: parseFloat(formData.price),
+        allow_custom_time: formData.allow_custom_time,
       });
 
       router.push('/providers/dashboard');

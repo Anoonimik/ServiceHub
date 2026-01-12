@@ -47,6 +47,7 @@ export async function POST(request: NextRequest) {
       service_id,
       reservation_date,
       notes,
+      time_slot_id,
     } = body;
 
     validateRequired(first_name, 'first_name');
@@ -71,6 +72,7 @@ export async function POST(request: NextRequest) {
       serviceId: service_id,
       reservationDate: reservation_date,
       notes,
+      timeSlotId: time_slot_id ? parseInt(time_slot_id, 10) : undefined,
     });
 
     return {

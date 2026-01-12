@@ -1,5 +1,5 @@
 import React from 'react';
-import { Reservation } from '@/shared/lib/hooks/useReservations';
+import { Reservation } from '@/entities/reservation/model/types';
 
 interface ReservationsTableProps {
   reservations: Reservation[];

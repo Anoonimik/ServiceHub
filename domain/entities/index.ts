@@ -3,4 +3,5 @@ export * from './Service';
 export * from './Reservation';
 export * from './Provider';
 export * from './Customer';
+export * from './TimeSlot';
 

@@ -10,6 +10,7 @@ interface ReservationFormData {
   service_id: string;
   reservation_date: string;
   notes: string;
+  time_slot_id?: number;
 }
 
 export function useReservationForm() {
@@ -18,6 +19,7 @@ export function useReservationForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [selectedSlotId, setSelectedSlotId] = useState<number | null>(null);
 
   const [formData, setFormData] = useState<ReservationFormData>({
     first_name: '',
@@ -27,14 +29,15 @@ export function useReservationForm() {
     service_id: '',
     reservation_date: '',
     notes: '',
+    time_slot_id: undefined,
   });
 
   useEffect(() => {
     if (isAuthenticated && user) {
       setFormData(prev => ({
         ...prev,
-        first_name: user.first_name,
-        last_name: user.last_name,
+        first_name: user.firstName,
+        last_name: user.lastName,
         email: user.email,
         phone: user.phone || '',
       }));
@@ -66,10 +69,24 @@ export function useReservationForm() {
         headers['Authorization'] = `Bearer ${token}`;
       }
 
+      const payload: any = {
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        email: formData.email,
+        phone: formData.phone,
+        service_id: formData.service_id,
+        reservation_date: formData.reservation_date,
+        notes: formData.notes,
+      };
+
+      if (formData.time_slot_id) {
+        payload.time_slot_id = formData.time_slot_id;
+      }
+
       const response = await fetch('/api/reservations', {
         method: 'POST',
         headers,
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       const result = await response.json();
@@ -89,13 +106,24 @@ export function useReservationForm() {
     }
   };
 
+  const handleSlotSelect = (slotId: number, startTime: string) => {
+    setSelectedSlotId(slotId);
+    setFormData({
+      ...formData,
+      reservation_date: new Date(startTime).toISOString().slice(0, 16),
+      time_slot_id: slotId,
+    });
+  };
+
   return {
     formData,
     loading,
     error,
     success,
+    selectedSlotId,
     handleChange,
     handleSubmit,
+    handleSlotSelect,
   };
 }
 

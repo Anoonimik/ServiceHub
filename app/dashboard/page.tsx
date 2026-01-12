@@ -4,15 +4,33 @@ import React from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/shared/lib/hooks/useAuth';
 import { useMyReservations } from '@/shared/lib/hooks/useReservations';
+import { useReservationManagement } from '@/features/reservation-management';
 import { ProfileCard } from '@/widgets/ProfileCard/ProfileCard';
 import { AppointmentsList } from '@/widgets/AppointmentsList/AppointmentsList';
-import { Button } from '@/shared/ui';
+import { Button, SuccessMessage, ErrorMessage } from '@/shared/ui';
+import { useState } from 'react';
 
 export default function DashboardPage() {
   const { user, loading: authLoading } = useRequireAuth();
-  const { reservations, loading: reservationsLoading } = useMyReservations();
+  const { reservations, loading: reservationsLoading, refetch } = useMyReservations();
+  const { cancelReservation } = useReservationManagement();
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
   const loading = authLoading || reservationsLoading;
+
+  const handleCancel = async (id: number) => {
+    try {
+      setErrorMessage(null);
+      await cancelReservation(id);
+      setSuccessMessage('Reservation cancelled successfully');
+      setTimeout(() => setSuccessMessage(null), 3000);
+      refetch();
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Failed to cancel reservation');
+      setTimeout(() => setErrorMessage(null), 3000);
+    }
+  };
 
   if (loading) {
     return (
@@ -35,6 +53,9 @@ export default function DashboardPage() {
             <p className="text-lg text-gray-600">Welcome back, {user.firstName} {user.lastName}!</p>
           </div>
 
+          {successMessage && <SuccessMessage message={successMessage} />}
+          {errorMessage && <ErrorMessage message={errorMessage} />}
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             {user && <ProfileCard user={user} />}
 
@@ -47,7 +68,11 @@ export default function DashboardPage() {
                   </svg>
                 </div>
               </div>
-              <AppointmentsList reservations={reservations} />
+              <AppointmentsList 
+                reservations={reservations} 
+                onCancel={handleCancel}
+                showCancelButton={true}
+              />
             </div>
           </div>
 

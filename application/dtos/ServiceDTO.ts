@@ -3,6 +3,7 @@ export interface CreateServiceDTO {
   description?: string;
   duration: number;
   price: number;
+  allowCustomTime?: boolean;
 }
 
 export interface ServiceResponseDTO {

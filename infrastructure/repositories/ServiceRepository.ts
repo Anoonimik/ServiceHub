@@ -12,6 +12,7 @@ export class ServiceRepository implements IServiceRepository {
       duration: number;
       price: number;
       is_active: boolean;
+      allow_custom_time: boolean;
       created_at: Date;
       updated_at: Date;
     }>(
@@ -29,6 +30,7 @@ export class ServiceRepository implements IServiceRepository {
       result.duration,
       result.price,
       result.is_active,
+      result.allow_custom_time ?? true,
       new Date(result.created_at),
       new Date(result.updated_at)
     );
@@ -43,6 +45,7 @@ export class ServiceRepository implements IServiceRepository {
       duration: number;
       price: number;
       is_active: boolean;
+      allow_custom_time: boolean;
       created_at: Date;
       updated_at: Date;
     }>(
@@ -58,6 +61,7 @@ export class ServiceRepository implements IServiceRepository {
       r.duration,
       r.price,
       r.is_active,
+      r.allow_custom_time ?? true,
       new Date(r.created_at),
       new Date(r.updated_at)
     ));
@@ -72,6 +76,7 @@ export class ServiceRepository implements IServiceRepository {
       duration: number;
       price: number;
       is_active: boolean;
+      allow_custom_time: boolean;
       created_at: Date;
       updated_at: Date;
     }>(
@@ -87,15 +92,17 @@ export class ServiceRepository implements IServiceRepository {
       r.duration,
       r.price,
       r.is_active,
+      r.allow_custom_time ?? true,
       new Date(r.created_at),
       new Date(r.updated_at)
     ));
   }
 
   async create(serviceData: CreateServiceData): Promise<Service> {
+    const allowCustomTime = serviceData.allowCustomTime !== undefined ? serviceData.allowCustomTime : true;
     const insertId = await executeInsert(
-      'INSERT INTO services (provider_id, name, description, duration, price) VALUES (?, ?, ?, ?, ?)',
-      [serviceData.providerId, serviceData.name, serviceData.description || null, serviceData.duration, serviceData.price]
+      'INSERT INTO services (provider_id, name, description, duration, price, allow_custom_time) VALUES (?, ?, ?, ?, ?, ?)',
+      [serviceData.providerId, serviceData.name, serviceData.description || null, serviceData.duration, serviceData.price, allowCustomTime]
     );
 
     const service = await this.findById(insertId);
@@ -129,6 +136,10 @@ export class ServiceRepository implements IServiceRepository {
     if (serviceData.isActive !== undefined) {
       updates.push('is_active = ?');
       values.push(serviceData.isActive);
+    }
+    if (serviceData.allowCustomTime !== undefined) {
+      updates.push('allow_custom_time = ?');
+      values.push(serviceData.allowCustomTime);
     }
 
     if (updates.length === 0) {

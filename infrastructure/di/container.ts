@@ -3,6 +3,7 @@ import { IServiceRepository } from '@/domain/repositories/IServiceRepository';
 import { IReservationRepository } from '@/domain/repositories/IReservationRepository';
 import { IProviderRepository } from '@/domain/repositories/IProviderRepository';
 import { ICustomerRepository } from '@/domain/repositories/ICustomerRepository';
+import { ITimeSlotRepository } from '@/domain/repositories/ITimeSlotRepository';
 import { IPasswordHasher } from '@/application/interfaces/IPasswordHasher';
 import { IPasswordVerifier } from '@/application/interfaces/IPasswordVerifier';
 import { ITokenGenerator } from '@/application/interfaces/ITokenGenerator';
@@ -12,6 +13,7 @@ import { ServiceRepository } from '@/infrastructure/repositories/ServiceReposito
 import { ReservationRepository } from '@/infrastructure/repositories/ReservationRepository';
 import { ProviderRepository } from '@/infrastructure/repositories/ProviderRepository';
 import { CustomerRepository } from '@/infrastructure/repositories/CustomerRepository';
+import { TimeSlotRepository } from '@/infrastructure/repositories/TimeSlotRepository';
 import { PasswordHasher } from '@/infrastructure/services/PasswordHasher';
 import { PasswordVerifier } from '@/infrastructure/services/PasswordVerifier';
 import { TokenGenerator } from '@/infrastructure/services/TokenGenerator';
@@ -22,20 +24,22 @@ import { CreateServiceUseCase } from '@/application/use-cases/services/CreateSer
 import { CreateReservationUseCase } from '@/application/use-cases/reservations/CreateReservationUseCase';
 import { CreateProviderUseCase } from '@/application/use-cases/providers/CreateProviderUseCase';
 
+/**
+ * Dependency Injection Container
+ * Manages singleton instances of repositories, services, and use cases
+ */
 class DIContainer {
-  // Repositories (singletons)
   private _userRepository: IUserRepository | null = null;
   private _serviceRepository: IServiceRepository | null = null;
   private _reservationRepository: IReservationRepository | null = null;
   private _providerRepository: IProviderRepository | null = null;
   private _customerRepository: ICustomerRepository | null = null;
+  private _timeSlotRepository: ITimeSlotRepository | null = null;
 
-  // Services (singletons)
   private _passwordHasher: IPasswordHasher | null = null;
   private _passwordVerifier: IPasswordVerifier | null = null;
   private _tokenGenerator: ITokenGenerator | null = null;
 
-  // Use Cases (singletons)
   private _registerUserUseCase: RegisterUserUseCase | null = null;
   private _loginUserUseCase: LoginUserUseCase | null = null;
   private _createServiceUseCase: CreateServiceUseCase | null = null;
@@ -75,6 +79,13 @@ class DIContainer {
       this._customerRepository = new CustomerRepository();
     }
     return this._customerRepository;
+  }
+
+  get timeSlotRepository(): ITimeSlotRepository {
+    if (!this._timeSlotRepository) {
+      this._timeSlotRepository = new TimeSlotRepository();
+    }
+    return this._timeSlotRepository;
   }
 
   get passwordHasher(): IPasswordHasher {
@@ -135,7 +146,8 @@ class DIContainer {
       this._createReservationUseCase = new CreateReservationUseCase(
         this.reservationRepository,
         this.serviceRepository,
-        this.customerRepository
+        this.customerRepository,
+        this.timeSlotRepository
       );
     }
     return this._createReservationUseCase;

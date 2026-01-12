@@ -1,16 +1,11 @@
 import { useState, useEffect } from 'react';
+import { Reservation } from '@/entities/reservation/model/types';
 
-export interface Reservation {
-  id: number;
-  reservation_date: string;
-  status: string;
-  service_name: string;
-  customer_first_name: string;
-  customer_last_name: string;
-  provider_business_name?: string;
-  provider_first_name?: string;
-  provider_last_name?: string;
-}
+/**
+ * Re-export Reservation type for backward compatibility
+ * @deprecated Use Reservation from '@/entities/reservation/model/types' instead
+ */
+export type { Reservation };
 
 export function useReservations() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -28,7 +23,6 @@ export function useReservations() {
       const response = await fetch('/api/reservations');
       const result = await response.json();
       
-      // Handle new API format with success/data or old format
       const data = result.success !== undefined ? result.data : result;
       
       if (Array.isArray(data)) {

@@ -10,14 +10,18 @@ export class CreateProviderUseCase {
     private userRepository: IUserRepository
   ) {}
 
+  /**
+   * Execute provider creation use case
+   * @param userId - User ID to create provider for
+   * @param dto - Provider creation data
+   * @returns Created provider entity
+   */
   async execute(userId: number, dto: CreateProviderDTO): Promise<Provider> {
-    // Check if user is already a provider
     const exists = await this.providerRepository.existsByUserId(userId);
     if (exists) {
       throw new ApiError(400, 'User is already a service provider');
     }
 
-    // Create provider
     const providerData: CreateProviderData = {
       userId,
       businessName: dto.businessName || null,
@@ -26,7 +30,6 @@ export class CreateProviderUseCase {
 
     const provider = await this.providerRepository.create(providerData);
 
-    // Update user role to provider
     await this.userRepository.update(userId, { role: 'provider' });
 
     return provider;

@@ -3,6 +3,7 @@ import { Reservation } from '../entities/Reservation';
 export interface IReservationRepository {
   findById(id: number): Promise<Reservation | null>;
   findByUserId(userId: number): Promise<Reservation[]>;
+  findByProviderId(providerId: number): Promise<Reservation[]>;
   findRecent(limit?: number): Promise<Reservation[]>;
   create(reservationData: CreateReservationData): Promise<Reservation>;
   update(id: number, reservationData: Partial<UpdateReservationData>): Promise<Reservation>;

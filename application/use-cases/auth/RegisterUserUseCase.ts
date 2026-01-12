@@ -12,17 +12,19 @@ export class RegisterUserUseCase {
     private tokenGenerator: ITokenGenerator
   ) {}
 
+  /**
+   * Execute user registration use case
+   * @param dto - User registration data
+   * @returns Created user and authentication token
+   */
   async execute(dto: RegisterUserDTO): Promise<{ user: User; token: string }> {
-    // Check if user exists
     const exists = await this.userRepository.existsByEmail(dto.email);
     if (exists) {
       throw new ApiError(400, 'User with this email already exists');
     }
 
-    // Hash password
     const passwordHash = await this.passwordHasher.hash(dto.password);
 
-    // Create user
     const userData: CreateUserData = {
       email: dto.email,
       passwordHash,
@@ -33,7 +35,6 @@ export class RegisterUserUseCase {
 
     const user = await this.userRepository.create(userData);
 
-    // Generate token
     const token = this.tokenGenerator.generate({
       id: user.id,
       email: user.email,

@@ -2,16 +2,20 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { useRequireAuth } from '@/shared/lib/hooks/useAuth';
 import { useMyProvider } from '@/shared/lib/hooks/useProviders';
 import { useMyServices } from '@/shared/lib/hooks/useServices';
 import { useProviderStats } from '@/shared/lib/hooks/useProviderStats';
-import { Button, LoadingSpinner } from '@/shared/ui';
+import { LoadingSpinner } from '@/shared/ui';
+import { ProviderDashboardHeader } from '@/widgets/ProviderDashboardHeader/ProviderDashboardHeader';
 import { ProviderStats } from '@/widgets/ProviderStats/ProviderStats';
 import { ProviderInfoCard } from '@/widgets/ProviderInfoCard/ProviderInfoCard';
 import { ProviderServicesList } from '@/widgets/ProviderServicesList/ProviderServicesList';
 
+/**
+ * Provider Dashboard Page
+ * Main page for service providers to manage their services and view statistics
+ */
 export default function ProviderDashboardPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useRequireAuth('provider');
@@ -23,7 +27,7 @@ export default function ProviderDashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -39,25 +43,10 @@ export default function ProviderDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-gray-100">
       <div className="page-container">
-        <div className="max-w-7xl mx-auto">
-          <div className="section-header">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1>Provider Dashboard</h1>
-                <p className="text-lg text-gray-600 mt-1">Manage your services and appointments</p>
-              </div>
-              <Link href="/providers/services/new">
-                <Button variant="primary" className="flex items-center gap-2">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                  Add Service
-                </Button>
-              </Link>
-            </div>
-          </div>
+        <div className="max-w-7xl mx-auto py-8">
+          <ProviderDashboardHeader />
 
           <ProviderStats 
             totalServices={stats.totalServices}

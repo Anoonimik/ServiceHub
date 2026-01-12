@@ -96,6 +96,23 @@ export default function NewServicePage() {
                 />
               </div>
 
+              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <input
+                  type="checkbox"
+                  id="allow_custom_time"
+                  name="allow_custom_time"
+                  checked={formData.allow_custom_time}
+                  onChange={handleChange}
+                  className="w-5 h-5 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                />
+                <label htmlFor="allow_custom_time" className="flex-1 cursor-pointer">
+                  <div className="font-semibold text-gray-900">Allow custom time booking</div>
+                  <div className="text-sm text-gray-600 mt-1">
+                    When enabled, clients can enter a custom date and time instead of selecting from available time slots
+                  </div>
+                </label>
+              </div>
+
               <div className="flex flex-wrap gap-4 pt-4">
                 <Button type="submit" fullWidth disabled={loading}>
                   {loading ? (

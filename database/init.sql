@@ -1,5 +1,5 @@
--- Create database if not exists
-CREATE DATABASE IF NOT EXISTS servicehub_db;
+-- Note: Database 'servicehub_db' is created automatically by MySQL Docker container via MYSQL_DATABASE env var
+-- All scripts in /docker-entrypoint-initdb.d/ are executed automatically on first container initialization
 USE servicehub_db;
 
 -- Users table for authentication (MUST BE FIRST - other tables reference it)
@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS services (
     duration INT NOT NULL COMMENT 'Duration in minutes',
     price DECIMAL(10, 2) NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
+    allow_custom_time BOOLEAN DEFAULT TRUE COMMENT 'Allow clients to enter custom time instead of selecting from time slots',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (provider_id) REFERENCES service_providers(id) ON DELETE CASCADE,
@@ -77,6 +78,21 @@ CREATE TABLE IF NOT EXISTS reservations (
     INDEX idx_reservation_date (reservation_date),
     INDEX idx_status (status),
     INDEX idx_user_id (user_id)
+);
+
+-- Time Slots table - available time slots for services
+CREATE TABLE IF NOT EXISTS time_slots (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    service_id INT NOT NULL,
+    start_time DATETIME NOT NULL,
+    end_time DATETIME NOT NULL,
+    is_available BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE,
+    INDEX idx_service_id (service_id),
+    INDEX idx_start_time (start_time),
+    INDEX idx_is_available (is_available)
 );
 
 -- Sessions table for JWT tokens (optional, can use stateless JWT)

@@ -15,6 +15,7 @@ export interface CreateServiceData {
   description?: string | null;
   duration: number;
   price: number;
+  allowCustomTime?: boolean;
 }
 
 export interface UpdateServiceData {
@@ -23,5 +24,6 @@ export interface UpdateServiceData {
   duration?: number;
   price?: number;
   isActive?: boolean;
+  allowCustomTime?: boolean;
 }
 

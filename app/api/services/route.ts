@@ -46,20 +46,20 @@ export async function POST(request: NextRequest) {
       description,
       duration,
       price,
+      allowCustomTime: body.allow_custom_time !== undefined ? body.allow_custom_time : true,
     });
 
-    const serviceDTO: ServiceResponseDTO = {
+    return {
       id: service.id,
-      providerId: service.providerId,
+      provider_id: service.providerId,
       name: service.name,
       description: service.description,
       duration: service.duration,
       price: service.price,
-      isActive: service.isActive,
-      createdAt: service.createdAt.toISOString(),
-      updatedAt: service.updatedAt.toISOString(),
+      is_active: service.isActive,
+      allow_custom_time: service.allowCustomTime,
+      created_at: service.createdAt.toISOString(),
+      updated_at: service.updatedAt.toISOString(),
     };
-
-    return serviceDTO;
   });
 }

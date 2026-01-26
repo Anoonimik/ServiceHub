@@ -25,6 +25,7 @@ export default function EditServicePage() {
   } = useEditService({
     service,
     onSuccess: () => {
+      fetchService();
       router.push('/providers/dashboard');
     },
   });

@@ -60,6 +60,10 @@ export function useReservationForm() {
     setSuccess('');
 
     try {
+      if (!formData.reservation_date) {
+        throw new Error('Please select a date and time for your appointment');
+      }
+
       const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
       const headers: HeadersInit = {
         'Content-Type': 'application/json',

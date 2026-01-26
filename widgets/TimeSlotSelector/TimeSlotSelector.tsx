@@ -11,6 +11,7 @@ interface TimeSlotSelectorProps {
   onSlotSelect: (slotId: number, startTime: string) => void;
   startDate?: string;
   endDate?: string;
+  onSlotsChange?: (hasSlots: boolean) => void;
 }
 
 export const TimeSlotSelector = ({
@@ -19,6 +20,7 @@ export const TimeSlotSelector = ({
   onSlotSelect,
   startDate,
   endDate,
+  onSlotsChange,
 }: TimeSlotSelectorProps) => {
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [loading, setLoading] = useState(false);
@@ -29,8 +31,15 @@ export const TimeSlotSelector = ({
       fetchSlots();
     } else {
       setSlots([]);
+      onSlotsChange?.(false);
     }
   }, [serviceId, startDate, endDate]);
+
+  useEffect(() => {
+    if (!loading && serviceId) {
+      onSlotsChange?.(slots.length > 0);
+    }
+  }, [slots, loading, serviceId]);
 
   const fetchSlots = async () => {
     if (!serviceId) return;

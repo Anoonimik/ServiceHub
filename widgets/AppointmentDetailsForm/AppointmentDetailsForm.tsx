@@ -28,12 +28,33 @@ export const AppointmentDetailsForm = ({
   const selectedService = services.find(s => s.id === serviceId);
   const allowCustomTime = selectedService?.allow_custom_time === true;
   const [useTimeSlots, setUseTimeSlots] = useState(true);
+  const [hasTimeSlots, setHasTimeSlots] = useState(true);
   
   useEffect(() => {
-    if (serviceId && !allowCustomTime) {
-      setUseTimeSlots(true);
+    if (serviceId) {
+      if (!allowCustomTime) {
+        setUseTimeSlots(true);
+      } else {
+        setHasTimeSlots(true);
+        setUseTimeSlots(true);
+      }
     }
   }, [serviceId, allowCustomTime]);
+
+  useEffect(() => {
+    if (serviceId && !hasTimeSlots && useTimeSlots) {
+      setUseTimeSlots(false);
+      if (selectedSlotId) {
+        const event = {
+          target: {
+            name: 'reservation_date',
+            value: '',
+          },
+        } as React.ChangeEvent<HTMLInputElement>;
+        onChange(event);
+      }
+    }
+  }, [hasTimeSlots, serviceId, useTimeSlots]);
 
   const handleSlotSelect = (slotId: number, startTime: string) => {
     if (onSlotSelect) {
@@ -78,7 +99,7 @@ export const AppointmentDetailsForm = ({
         </select>
       </div>
 
-      {serviceId && useTimeSlots ? (
+      {serviceId && useTimeSlots && hasTimeSlots ? (
         <div className="mb-5">
           <div className="flex items-center justify-between mb-2">
             <label className="block text-sm font-semibold text-gray-700 uppercase tracking-wide">
@@ -87,7 +108,18 @@ export const AppointmentDetailsForm = ({
             {allowCustomTime && (
               <button
                 type="button"
-                onClick={() => setUseTimeSlots(false)}
+                onClick={() => {
+                  setUseTimeSlots(false);
+                  if (selectedSlotId) {
+                    const event = {
+                      target: {
+                        name: 'reservation_date',
+                        value: '',
+                      },
+                    } as React.ChangeEvent<HTMLInputElement>;
+                    onChange(event);
+                  }
+                }}
                 className="text-xs text-primary-600 hover:text-primary-700"
               >
                 Or enter custom time
@@ -98,6 +130,7 @@ export const AppointmentDetailsForm = ({
             serviceId={serviceId}
             selectedSlotId={selectedSlotId || null}
             onSlotSelect={handleSlotSelect}
+            onSlotsChange={setHasTimeSlots}
           />
           {selectedSlotId && (
             <input
@@ -107,16 +140,27 @@ export const AppointmentDetailsForm = ({
             />
           )}
         </div>
-      ) : allowCustomTime ? (
+      ) : serviceId && !hasTimeSlots ? (
         <div className="mb-5">
           <div className="flex items-center justify-between mb-2">
             <label className="block text-sm font-semibold text-gray-700 uppercase tracking-wide">
               Date & Time *
             </label>
-            {serviceId && (
+            {hasTimeSlots && (
               <button
                 type="button"
-                onClick={() => setUseTimeSlots(true)}
+                onClick={() => {
+                  setUseTimeSlots(true);
+                  if (formData.reservation_date && !selectedSlotId) {
+                    const event = {
+                      target: {
+                        name: 'reservation_date',
+                        value: '',
+                      },
+                    } as React.ChangeEvent<HTMLInputElement>;
+                    onChange(event);
+                  }
+                }}
                 className="text-xs text-primary-600 hover:text-primary-700"
               >
                 Use available slots
@@ -131,7 +175,42 @@ export const AppointmentDetailsForm = ({
             required
           />
         </div>
-      ) : serviceId ? (
+      ) : allowCustomTime && !useTimeSlots ? (
+        <div className="mb-5">
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-semibold text-gray-700 uppercase tracking-wide">
+              Date & Time *
+            </label>
+            {serviceId && (
+              <button
+                type="button"
+                onClick={() => {
+                  setUseTimeSlots(true);
+                  if (formData.reservation_date && !selectedSlotId) {
+                    const event = {
+                      target: {
+                        name: 'reservation_date',
+                        value: '',
+                      },
+                    } as React.ChangeEvent<HTMLInputElement>;
+                    onChange(event);
+                  }
+                }}
+                className="text-xs text-primary-600 hover:text-primary-700"
+              >
+                Use available slots
+              </button>
+            )}
+          </div>
+          <Input
+            type="datetime-local"
+            name="reservation_date"
+            value={formData.reservation_date}
+            onChange={onChange}
+            required
+          />
+        </div>
+      ) : serviceId && !allowCustomTime ? (
         <div className="mb-5">
           <label className="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">
             Available Time Slots *
@@ -140,6 +219,7 @@ export const AppointmentDetailsForm = ({
             serviceId={serviceId}
             selectedSlotId={selectedSlotId || null}
             onSlotSelect={handleSlotSelect}
+            onSlotsChange={setHasTimeSlots}
           />
           {selectedSlotId && (
             <input
